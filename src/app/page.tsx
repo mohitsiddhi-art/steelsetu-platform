@@ -1,5 +1,6 @@
 ﻿import Navbar from '@/components/layout/Navbar';
 import InventoryTable from '@/components/common/InventoryTable';
+import WeightCalculator from '@/components/common/WeightCalculator';
 import { getFeaturedProducts } from '@/services/catalogService';
 
 export default async function HomePage() {
@@ -28,6 +29,8 @@ export default async function HomePage() {
             </div>
           </div>
         </div>
+
+        <WeightCalculator />
 
         <section id="catalog" className="space-y-4">
           <div className="flex items-center justify-between">
