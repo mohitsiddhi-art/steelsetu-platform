@@ -1,16 +1,18 @@
 ﻿import Navbar from '@/components/layout/Navbar';
 import InventoryTable from '@/components/common/InventoryTable';
 import WeightCalculator from '@/components/common/WeightCalculator';
+import TradingStats from '@/components/common/TradingStats';
 import { getFeaturedProducts } from '@/services/catalogService';
 
 export default async function HomePage() {
   const products = await getFeaturedProducts();
+  const totalStockTons = products.reduce((acc, curr) => acc + curr.inventoryTons, 0);
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-10 space-y-10">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-10 space-y-8">
         <div className="border-b border-slate-800 pb-8">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
@@ -29,6 +31,8 @@ export default async function HomePage() {
             </div>
           </div>
         </div>
+
+        <TradingStats totalTons={totalStockTons} productCount={products.length} />
 
         <WeightCalculator />
 

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { SteelProduct } from '@/types/steel';
-import { X, Send, CheckCircle2 } from 'lucide-react';
+import { X, Send, CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
 
 interface RfqModalProps {
   product: SteelProduct | null;
@@ -15,15 +15,49 @@ export default function RfqModal({ product, onClose }: RfqModalProps) {
   const [gstNumber, setGstNumber] = useState('');
   const [tons, setTons] = useState<number>(product?.minimumOrderTons || 5);
   const [pincode, setPincode] = useState('');
-  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [referenceId, setReferenceId] = useState<string | null>(null);
 
   if (!product) return null;
 
   const estimatedValue = (tons || 0) * product.pricePerTonInr;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setLoading(true);
+    setErrorMsg(null);
+
+    try {
+      const res = await fetch('/api/rfq', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          buyerName,
+          companyName,
+          gstNumber,
+          tons,
+          productId: product.id,
+          pincode,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to submit RFQ inquiry');
+      }
+
+      setReferenceId(data.data.referenceId);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setErrorMsg(err.message);
+      } else {
+        setErrorMsg('An unexpected error occurred');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -36,19 +70,22 @@ export default function RfqModal({ product, onClose }: RfqModalProps) {
           <X className="w-5 h-5" />
         </button>
 
-        {submitted ? (
+        {referenceId ? (
           <div className="text-center py-8 space-y-4">
             <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto" />
-            <h3 className="text-xl font-bold text-white">Inquiry Dispatched</h3>
+            <h3 className="text-xl font-bold text-white">Inquiry Logged</h3>
+            <p className="text-xs font-mono text-emerald-400 uppercase tracking-widest">
+              Reference: {referenceId}
+            </p>
             <p className="text-sm text-slate-300">
               Your inquiry for <span className="font-semibold text-white">{tons} MT</span> of{' '}
-              <span className="text-blue-400">{product.name}</span> has been logged. Our trading desk will verify mill allocation and contact you within 2 hours.
+              <span className="text-blue-400">{product.name}</span> has been dispatched to our allocation desk.
             </p>
             <button
               onClick={onClose}
               className="mt-4 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-sm transition-colors"
             >
-              Close
+              Done
             </button>
           </div>
         ) : (
@@ -60,6 +97,13 @@ export default function RfqModal({ product, onClose }: RfqModalProps) {
               <h3 className="text-lg font-bold text-white mt-1">{product.name}</h3>
               <p className="text-xs text-slate-400 font-mono">SKU: {product.sku}</p>
             </div>
+
+            {errorMsg && (
+              <div className="p-3 bg-red-950/60 border border-red-800 text-red-300 rounded-lg text-xs flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+                <span>{errorMsg}</span>
+              </div>
+            )}
 
             <div className="grid grid-cols-2 gap-3 pt-2">
               <div>
@@ -88,10 +132,11 @@ export default function RfqModal({ product, onClose }: RfqModalProps) {
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs text-slate-400 mb-1">GSTIN Number</label>
+                <label className="block text-xs text-slate-400 mb-1">GSTIN Number (15 Digits)</label>
                 <input
                   required
                   type="text"
+                  maxLength={15}
                   placeholder="22AAAAA0000A1Z5"
                   value={gstNumber}
                   onChange={(e) => setGstNumber(e.target.value.toUpperCase())}
@@ -138,10 +183,20 @@ export default function RfqModal({ product, onClose }: RfqModalProps) {
 
             <button
               type="submit"
-              className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-colors shadow-lg shadow-blue-900/30"
+              disabled={loading}
+              className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-900/50 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-colors shadow-lg shadow-blue-900/30"
             >
-              <Send className="w-4 h-4" />
-              Submit RFQ for Mill Allocation
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Routing to Trade Desk...
+                </>
+              ) : (
+                <>
+                  <Send className="w-4 h-4" />
+                  Submit RFQ for Mill Allocation
+                </>
+              )}
             </button>
           </form>
         )}
