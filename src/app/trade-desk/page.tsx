@@ -1,8 +1,6 @@
 ﻿import Navbar from '@/components/layout/Navbar';
 import { getAllRfqs } from '@/lib/rfqStore';
-import { ShieldCheck, Clock, CheckCircle } from 'lucide-react';
-
-export const dynamic = 'force-dynamic';
+import { Clock, CheckCircle } from 'lucide-react';
 
 export default async function TradeDeskPage() {
   const inquiries = getAllRfqs();
@@ -66,7 +64,11 @@ export default async function TradeDeskPage() {
                   </td>
                   <td className="px-6 py-4 font-sans">
                     <span
-                      className={inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium border }
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium border ${
+                        rfq.status === 'ALLOCATED'
+                          ? 'bg-emerald-950/60 border-emerald-800 text-emerald-400'
+                          : 'bg-amber-950/60 border-amber-800 text-amber-400'
+                      }`}
                     >
                       {rfq.status === 'ALLOCATED' ? (
                         <CheckCircle className="w-3 h-3" />

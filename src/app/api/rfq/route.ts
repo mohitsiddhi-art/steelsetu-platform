@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     }
 
     const matchedProduct = INITIAL_STEEL_CATALOG.find((p) => p.id === productId);
-    const inquiryReference = RFQ-;
+    const inquiryReference = `RFQ-${Date.now().toString(36).toUpperCase()}`;
 
     const newInquiry: StoredRFQ = {
       referenceId: inquiryReference,
@@ -51,7 +51,7 @@ export async function POST(request: Request) {
       message: 'Inquiry registered into trade desk pipeline',
       data: newInquiry,
     });
-  } catch (err) {
+  } catch {
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }

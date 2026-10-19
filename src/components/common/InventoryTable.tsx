@@ -1,9 +1,9 @@
 ﻿'use client';
 
 import { useState } from 'react';
-import { SteelProduct, SteelCategory } from '@/types/steel';
+import { SteelProduct } from '@/types/steel';
 import RfqModal from './RfqModal';
-import { Search, Filter } from 'lucide-react';
+import { Search } from 'lucide-react';
 
 interface InventoryTableProps {
   products: SteelProduct[];
@@ -39,7 +39,11 @@ export default function InventoryTable({ products }: InventoryTableProps) {
               <button
                 key={c.value}
                 onClick={() => setActiveCategory(c.value)}
-                className={px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors }
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+                  activeCategory === c.value
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
+                }`}
               >
                 {c.label}
               </button>
