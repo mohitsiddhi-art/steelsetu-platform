@@ -1,0 +1,35 @@
+{
+  "status": 200,
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/trade-desk/layout,_N_T_/trade-desk/page,_N_T_/trade-desk"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/trade-desk/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 49216,
+    "slots": {
+      "children": {
+        "hints": 49248,
+        "slots": {
+          "children": {
+            "hints": 49312,
+            "slots": null
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/6d67b49c1f7c21e8065d759061d08117cae23e8060f012fe8ce9daa44680fb02/$/trade-desk",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/trade-desk/page"
+    },
+    "isFallback": false
+  }
+}

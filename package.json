@@ -1,29 +1,24 @@
 {
-  "name": "steelsetu",
+  "name": "steelsetu-platform",
   "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
-  },
-  "dependencies": {
-    "@prisma/client": "^7.10.1",
-    "@supabase/supabase-js": "^2.118.0",
-    "lucide-react": "^1.59.0",
-    "next": "16.4.2",
-    "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "dev": "turbo run dev",
+    "dev:web": "npm run dev --workspace=@steelsetu/web",
+    "dev:api": "npm run dev --workspace=@steelsetu/api",
+    "build": "turbo run build",
+    "build:web": "npm run build --workspace=@steelsetu/web",
+    "lint": "turbo run lint",
+    "db:generate": "npm run db:generate --workspace=@steelsetu/database",
+    "db:push": "npm run db:push --workspace=@steelsetu/database",
+    "db:seed": "npm run db:seed --workspace=@steelsetu/database"
   },
   "devDependencies": {
-    "@tailwindcss/turbopack": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.4.2",
-    "tailwindcss": "^4",
+    "turbo": "^2.4.0",
     "typescript": "^5"
   }
 }
