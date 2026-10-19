@@ -1,8 +1,0 @@
-{
-  "/_global-error/page": "/_global-error",
-  "/_not-found/page": "/_not-found",
-  "/api/rfq/route": "/api/rfq",
-  "/favicon.ico/route": "/favicon.ico",
-  "/page": "/",
-  "/trade-desk/page": "/trade-desk"
-}
