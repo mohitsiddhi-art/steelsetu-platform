@@ -1,11 +1,19 @@
 ﻿import { NextResponse } from 'next/server';
+import { addRfq, getAllRfqs, StoredRFQ } from '@/lib/rfqStore';
+import { INITIAL_STEEL_CATALOG } from '@/services/catalogService';
+
+export async function GET() {
+  return NextResponse.json({
+    success: true,
+    data: getAllRfqs(),
+  });
+}
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { buyerName, companyName, gstNumber, tons, productId, pincode } = body;
 
-    // Server-side validation
     if (!buyerName || !companyName || !gstNumber || !tons || !productId || !pincode) {
       return NextResponse.json(
         { error: 'Missing mandatory fields' },
@@ -20,25 +28,28 @@ export async function POST(request: Request) {
       );
     }
 
+    const matchedProduct = INITIAL_STEEL_CATALOG.find((p) => p.id === productId);
     const inquiryReference = RFQ-;
 
-    // Payload ready for database persistence / CRM webhook
-    const recordedInquiry = {
+    const newInquiry: StoredRFQ = {
       referenceId: inquiryReference,
       buyerName,
       companyName,
-      gstNumber,
+      gstNumber: gstNumber.toUpperCase(),
       tons: Number(tons),
       productId,
+      productName: matchedProduct ? matchedProduct.name : 'Custom Coil/Sheet',
       pincode,
-      status: 'LOGGED',
+      status: 'PENDING',
       timestamp: new Date().toISOString(),
     };
 
+    addRfq(newInquiry);
+
     return NextResponse.json({
       success: true,
-      message: 'Inquiry logged successfully',
-      data: recordedInquiry,
+      message: 'Inquiry registered into trade desk pipeline',
+      data: newInquiry,
     });
   } catch (err) {
     return NextResponse.json(
