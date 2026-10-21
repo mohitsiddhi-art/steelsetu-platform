@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { SteelProduct } from '@/types/steel';
 import RfqModal from './RfqModal';
+import { formatMm } from '@/lib/format';
 import { Search } from 'lucide-react';
 
 interface InventoryTableProps {
@@ -89,7 +90,7 @@ export default function InventoryTable({ products }: InventoryTableProps) {
                       <div className="text-xs text-slate-500 font-mono">{p.sku}</div>
                     </td>
                     <td className="px-6 py-4 font-mono text-xs">
-                      {p.thicknessMm}mm × {p.widthMm}mm
+                      {formatMm(p.thicknessMm)} × {formatMm(p.widthMm)}
                     </td>
                     <td className="px-6 py-4 font-medium text-blue-400">
                       {p.coating}

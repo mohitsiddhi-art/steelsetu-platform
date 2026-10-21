@@ -1,9 +1,27 @@
-﻿import Navbar from '@/components/layout/Navbar';
-import { getAllRfqs } from '@/lib/rfqStore';
+import { redirect } from 'next/navigation';
+import Navbar from '@/components/layout/Navbar';
+import { getAllRfqs } from '@/services/rfqService';
+import { getStaffIdentity } from '@/services/authService';
 import { Clock, CheckCircle } from 'lucide-react';
 
+/**
+ * The ledger reads live inquiry rows from Supabase, so it must not be
+ * prerendered at build time.
+ */
+export const instant = false;
+
 export default async function TradeDeskPage() {
-  const inquiries = getAllRfqs();
+  // Defence in depth: the proxy already blocks anonymous visitors, but this
+  // check lives with the data it protects. If the proxy is ever removed,
+  // misconfigured, or bypassed, this redirect still stops the buyer details
+  // from being rendered.
+  const staff = await getStaffIdentity();
+
+  if (!staff) {
+    redirect('/login?next=%2Ftrade-desk');
+  }
+
+  const inquiries = await getAllRfqs();
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">

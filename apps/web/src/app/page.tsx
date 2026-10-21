@@ -4,6 +4,13 @@ import WeightCalculator from '@/components/common/WeightCalculator';
 import TradingStats from '@/components/common/TradingStats';
 import { getFeaturedProducts } from '@/services/catalogService';
 
+/**
+ * The dashboard reads live spot rates and stock from Supabase, so it must not
+ * be prerendered at build time — a baked-in snapshot of prices would be
+ * misleading by the time the page is served.
+ */
+export const instant = false;
+
 export default async function HomePage() {
   const products = await getFeaturedProducts();
   const totalStockTons = products.reduce((acc, curr) => acc + curr.inventoryTons, 0);

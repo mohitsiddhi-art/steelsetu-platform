@@ -7,13 +7,18 @@
   "scripts": {
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
-    "db:seed": "tsx prisma/seed.ts"
+    "db:migrate": "node migrate.js",
+    "db:migrate:status": "node migrate.js --status",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:seed:catalog": "node seed-catalog.js",
+    "db:provision-staff": "node provision-staff.js"
   },
   "dependencies": {
-    "@prisma/client": "^6.4.1"
+    "@prisma/client": "^6.19.3",
+    "pg": "^8.23.1"
   },
   "devDependencies": {
-    "prisma": "^6.4.1",
+    "prisma": "^6.19.3",
     "tsx": "^4.19.2"
   }
 }
