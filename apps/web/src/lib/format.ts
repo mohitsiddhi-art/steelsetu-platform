@@ -28,14 +28,46 @@ export function formatInrPrecise(value: number): string {
   return `₹${INR_PRECISE.format(value)}`;
 }
 
-/** Format a metric ton quantity, trimming trailing zeroes — 45 / 82.5 */
+/**
+ * Format a metric ton quantity, trimming trailing zeroes — 45 / 82.5.
+ *
+ * Sub-tonne figures keep more decimals: a single 12 m bar weighs 0.0107 MT,
+ * and rounding that to one decimal would print a flat "0.0".
+ */
 export function formatTons(value: number): string {
-  return Number.isInteger(value) ? String(value) : value.toFixed(1);
+  if (!Number.isFinite(value)) return '0';
+  if (Number.isInteger(value)) return String(value);
+
+  const decimals = Math.abs(value) < 1 ? 4 : 1;
+  return String(Number(value.toFixed(decimals)));
 }
 
 /** Format a dimension in mm as a friendly string — 1060mm, 0.6mm */
 export function formatMm(value: number): string {
   return `${DECIMAL.format(value)}mm`;
+}
+
+/**
+ * Format an ISO timestamp for a table cell — "21 Oct 2026, 14:05".
+ *
+ * The locale is left to the runtime so a reader who has set their browser to
+ * हिन्दी gets Devanagari month names without a second date library. An
+ * unparseable value returns an empty string rather than "Invalid Date",
+ * because a blank cell is calmer than a broken-looking one.
+ */
+export function formatDateTime(iso: string | undefined | null): string {
+  if (!iso) return '';
+
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return '';
+
+  return new Intl.DateTimeFormat(undefined, {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(date);
 }
 
 /**

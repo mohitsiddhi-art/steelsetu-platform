@@ -2,6 +2,26 @@ import { NextResponse } from 'next/server';
 import { addRfq, getAllRfqs } from '@/services/rfqService';
 import { getProductById } from '@/services/catalogService';
 import { getStaffIdentity } from '@/services/authService';
+import { createSupabaseServerClient } from '@/lib/supabaseServer';
+
+/**
+ * Resolve the signed-in buyer's `auth.users.id`, if there is one.
+ *
+ * The public RFQ form posts without a session, and the anonymous path must
+ * keep working — so this returns `null` for an anonymous caller rather than
+ * rejecting the request. The id comes from the *verified* token claims, so
+ * it cannot be forged by a caller putting a `user_id` in the body.
+ */
+async function resolveSessionUserId(): Promise<string | null> {
+  try {
+    const supabase = await createSupabaseServerClient();
+    const { data, error } = await supabase.auth.getClaims();
+    if (error || !data?.claims) return null;
+    return data.claims.sub ?? null;
+  } catch {
+    return null;
+  }
+}
 
 /**
  * The inquiry feed.
@@ -27,7 +47,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { buyerName, companyName, gstNumber, tons, productId, pincode } = body;
+    const { buyerName, companyName, gstNumber, tons, productId, pincode, customSpecs } = body;
 
     if (!buyerName || !companyName || !gstNumber || !tons || !productId || !pincode) {
       return NextResponse.json(
@@ -78,6 +98,11 @@ export async function POST(request: Request) {
 
     const inquiryReference = `RFQ-${Date.now().toString(36).toUpperCase()}`;
 
+    // A signed-in buyer's request is linked to their account so it shows up
+    // in their portal's "My RFQs". An anonymous request is logged exactly as
+    // before.
+    const sessionUserId = await resolveSessionUserId();
+
     const stored = await addRfq({
       referenceId: inquiryReference,
       buyerName: String(buyerName).trim(),
@@ -87,7 +112,9 @@ export async function POST(request: Request) {
       productId: product.id,
       productName: product.name,
       pincode: String(pincode).trim(),
+      customSpecs: customSpecs ? String(customSpecs).trim() : null,
       status: 'PENDING',
+      userId: sessionUserId,
     });
 
     if (!stored) {

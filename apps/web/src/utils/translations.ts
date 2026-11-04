@@ -1,0 +1,38 @@
+export type Language = 'en' | 'hi';
+
+export const TRANSLATIONS: Record<Language, Record<string, string>> = {
+  en: {
+    products: 'Products',
+    suppliers: 'Suppliers',
+    calculators: 'Calculators',
+    community: 'Community',
+    tradeDesk: 'Trade Desk',
+    contact: 'Contact',
+    postRequirement: 'Post Requirement',
+    search: 'Search Burrabazar steel catalog...',
+    about: 'About',
+    readySpotStock: 'Ready Spot Stock',
+    directExMill: 'Direct Ex-Mill',
+    liveRates: 'Live Mandi Rates',
+    requestQuotation: 'Request Quotation',
+    staffPortal: 'Staff Portal',
+    hindiToggle: 'EN | हि',
+  },
+  hi: {
+    products: 'उत्पाद',
+    suppliers: 'आपूर्तिकर्ता',
+    calculators: '10-टूल कैलकुलेटर',
+    community: 'व्यापारी मंच',
+    tradeDesk: 'मर्चेंट ट्रेड डेस्क',
+    contact: 'संपर्क कार्यालय',
+    postRequirement: 'आवश्यकता दर्ज करें',
+    search: 'टीएमटी सरिया, कॉइल, रूफिंग शीट खोजें...',
+    about: 'हमारे बारे में',
+    readySpotStock: 'तत्काल स्पॉट स्टॉक',
+    directExMill: 'प्रत्यक्ष एक्स-मिल',
+    liveRates: 'लाइव मंडी भाव',
+    requestQuotation: 'कोटेशन अनुरोध करें',
+    staffPortal: 'स्टाफ पोर्टल',
+    hindiToggle: 'हि | EN',
+  },
+};

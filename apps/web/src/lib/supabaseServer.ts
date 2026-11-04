@@ -26,7 +26,17 @@ import {
  * anywhere in this file.
  */
 export async function createSupabaseServerClient() {
-  const cookieStore = await cookies();
+  let cookieStore: any;
+  try {
+    cookieStore = await cookies();
+  } catch {
+    cookieStore = {
+      getAll: () => [],
+      setAll: () => {},
+      set: () => {},
+      get: () => undefined,
+    };
+  }
 
   return createServerClient<Database>(supabaseUrl, supabaseAnonKey, {
     cookies: {

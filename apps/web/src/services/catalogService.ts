@@ -16,13 +16,10 @@ import { Database, Json } from '@/types/supabase';
  * The live database is Supabase Postgres with a flat, snake_case `products`
  * table (see packages/database/migrations/README.md). This module maps those
  * rows onto the app's `SteelProduct` type and applies catalogue filters.
- *
- * Every read is server-side (this module is imported from server components
- * only), and the anon key is sufficient because the table's RLS policy allows
- * public SELECT.
+ * Includes MOCK_PRODUCTS fallback so roofing accessories & fasteners are
+ * immediately available offline or prior to full database seeding.
  */
 
-/** Human labels for the catalogue categories, in display order. */
 export const CATEGORY_LABELS: Record<SteelCategory, string> = {
   PROFILE_SHEET: 'Profile / Roofing Sheets',
   GI_SHEET: 'GI Sheets',
@@ -32,6 +29,7 @@ export const CATEGORY_LABELS: Record<SteelCategory, string> = {
   CR_COIL: 'CR Coils',
   TMT_BAR: 'TMT Bars',
   ANGLE_CHANNEL: 'Angles & Channels',
+  ROOFING_ACCESSORY: 'Roofing Accessories & Fasteners',
 };
 
 const CATEGORY_ORDER: SteelCategory[] = [
@@ -43,9 +41,361 @@ const CATEGORY_ORDER: SteelCategory[] = [
   'CR_COIL',
   'TMT_BAR',
   'ANGLE_CHANNEL',
+  'ROOFING_ACCESSORY',
 ];
 
-/** Raw row shape returned by the `products` table. */
+const MOCK_PRODUCTS: SteelProduct[] = [
+  // 1. Mount SDS Screws 12x55
+  {
+    id: 'acc-mount-sds-12x55',
+    sku: 'ACC-MOUNT-SDS-12x55',
+    name: 'Mount Self-Drilling Screws (SDS) 12x55mm with EPDM Washer',
+    category: 'ROOFING_ACCESSORY',
+    thicknessMm: 5.5,
+    widthMm: 12,
+    lengthMm: 55,
+    coating: 'CUSTOM',
+    pricePerTonInr: 1420,
+    minimumOrderTons: 1,
+    inventoryTons: 600,
+    isInStock: true,
+    brand: 'Mount',
+    millName: 'Mount Fasteners & Hardware',
+    grade: 'Class 3 Anti-Corrosion',
+    hsnCode: '7318.14',
+    description: 'Mount Self-Drilling Screws (SDS) 12x55mm with EPDM Washer — Box of 1,000 pcs for secure roofing sheet installation.',
+    uom: 'Box',
+    city: 'Kolkata',
+    supplierName: 'Singhi Enterprises — Burrabazar',
+    isFeatured: true,
+    isVerified: true,
+  },
+  // 2. Mount SDS Screws 12x25
+  {
+    id: 'acc-mount-sds-12x25',
+    sku: 'ACC-MOUNT-SDS-12x25',
+    name: 'Mount Self-Drilling Screws (SDS) 12x25mm for Stitching',
+    category: 'ROOFING_ACCESSORY',
+    thicknessMm: 5.5,
+    widthMm: 12,
+    lengthMm: 25,
+    coating: 'CUSTOM',
+    pricePerTonInr: 1180,
+    minimumOrderTons: 1,
+    inventoryTons: 750,
+    isInStock: true,
+    brand: 'Mount',
+    millName: 'Mount Fasteners & Hardware',
+    grade: 'Class 3 Anti-Corrosion',
+    hsnCode: '7318.14',
+    description: 'Mount Self-Drilling Screws (SDS) 12x25mm for lap stitching and accessory fastening — Box of 1,000 pcs.',
+    uom: 'Box',
+    city: 'Kolkata',
+    supplierName: 'Singhi Enterprises — Burrabazar',
+    isFeatured: true,
+    isVerified: true,
+  },
+  // 3. PPGL Plain Ridge Flashing
+  {
+    id: 'acc-ppgl-ridge-050',
+    sku: 'ACC-PPGL-RIDGE-050',
+    name: 'PPGL Plain Ridge Flashing (0.50mm / 8ft length)',
+    category: 'ROOFING_ACCESSORY',
+    thicknessMm: 0.5,
+    widthMm: 300,
+    lengthMm: 2440,
+    coating: 'AZ150',
+    pricePerTonInr: 320,
+    minimumOrderTons: 10,
+    inventoryTons: 350,
+    isInStock: true,
+    brand: 'Tata Steel / JSW',
+    millName: 'Tata Steel Kalinganagar',
+    grade: 'IS 277',
+    hsnCode: '7210.41',
+    description: 'PPGL Plain Ridge Flashing (0.50mm / 8ft length) color matched for apex roof sealing.',
+    uom: 'Pc',
+    city: 'Kolkata',
+    supplierName: 'Singhi Enterprises — Burrabazar',
+    isFeatured: true,
+    isVerified: true,
+  },
+  // 4. GI Plain Ridge
+  {
+    id: 'acc-gi-plain-ridge',
+    sku: 'ACC-GI-PLAIN-RIDGE',
+    name: 'Galvanized (GI) Plain Ridge (0.45mm / 8ft length)',
+    category: 'ROOFING_ACCESSORY',
+    thicknessMm: 0.45,
+    widthMm: 300,
+    lengthMm: 2440,
+    coating: '120GSM',
+    pricePerTonInr: 260,
+    minimumOrderTons: 10,
+    inventoryTons: 400,
+    isInStock: true,
+    brand: 'Local Mandi Rolling',
+    millName: 'Burrabazar Local Rolling',
+    grade: 'IS 277',
+    hsnCode: '7210.41',
+    description: 'Galvanized (GI) Plain Ridge (0.45mm / 8ft length) economical ridge capping.',
+    uom: 'Pc',
+    city: 'Kolkata',
+    supplierName: 'Singhi Enterprises — Burrabazar',
+    isFeatured: true,
+    isVerified: true,
+  },
+  // 5. PPGL Rainwater Donga / Valley Gutter
+  {
+    id: 'acc-ppgl-donga-gutter',
+    sku: 'ACC-PPGL-DONGA-VALLEY',
+    name: 'PPGL Rainwater Donga / Valley Gutter (Custom Girth / 0.50mm)',
+    category: 'ROOFING_ACCESSORY',
+    thicknessMm: 0.5,
+    widthMm: 450,
+    lengthMm: 3000,
+    coating: 'AZ150',
+    pricePerTonInr: 410,
+    minimumOrderTons: 5,
+    inventoryTons: 280,
+    isInStock: true,
+    brand: 'Singhi Fabricators',
+    millName: 'Singhi Sheet Metal Works',
+    grade: 'IS 277',
+    hsnCode: '7210.41',
+    description: 'PPGL Rainwater Donga / Valley Gutter (Custom Girth / 0.50mm) for industrial drainage.',
+    uom: 'Pc',
+    city: 'Kolkata',
+    supplierName: 'Singhi Enterprises — Burrabazar',
+    isFeatured: true,
+    isVerified: true,
+  },
+  // 6. PPGL Corner / Gable Flashing
+  {
+    id: 'acc-ppgl-corner-gable',
+    sku: 'ACC-PPGL-CORNER-GABLE',
+    name: 'PPGL Corner / Gable Flashing (8ft length)',
+    category: 'ROOFING_ACCESSORY',
+    thicknessMm: 0.5,
+    widthMm: 300,
+    lengthMm: 2440,
+    coating: 'AZ150',
+    pricePerTonInr: 290,
+    minimumOrderTons: 5,
+    inventoryTons: 220,
+    isInStock: true,
+    brand: 'Singhi Fabricators',
+    millName: 'Singhi Sheet Metal Works',
+    grade: 'IS 277',
+    hsnCode: '7210.41',
+    description: 'PPGL Corner / Gable Flashing (8ft length) for clean building side termination.',
+    uom: 'Pc',
+    city: 'Kolkata',
+    supplierName: 'Singhi Enterprises — Burrabazar',
+    isFeatured: true,
+    isVerified: true,
+  },
+  // 7. FRP Corrugated Daylight Sheet
+  {
+    id: 'acc-frp-daylight',
+    sku: 'ACC-FRP-CORR-DAYLIGHT',
+    name: 'FRP Corrugated Daylight Profile Sheet (1.5mm UV Coated)',
+    category: 'ROOFING_ACCESSORY',
+    thicknessMm: 1.5,
+    widthMm: 1060,
+    lengthMm: 3000,
+    coating: 'NONE',
+    pricePerTonInr: 165,
+    minimumOrderTons: 5,
+    inventoryTons: 180,
+    isInStock: true,
+    brand: 'FibreTech',
+    millName: 'FibreTech Polymers',
+    grade: 'UV Stabilized FRP',
+    hsnCode: '3921.90',
+    description: 'FRP Corrugated Daylight Profile Sheet (1.5mm UV Coated) for translucent roof lighting.',
+    uom: 'Running Ft',
+    city: 'Kolkata',
+    supplierName: 'Singhi Enterprises — Burrabazar',
+    isFeatured: true,
+    isVerified: true,
+  },
+  // 8. Polycarbonate Multiwall / Profile Sheet
+  {
+    id: 'acc-poly-multiwall',
+    sku: 'ACC-POLY-MULTIWALL-20',
+    name: 'Polycarbonate Multiwall / Profile Sheet (2.0mm Clear Embossed)',
+    category: 'ROOFING_ACCESSORY',
+    thicknessMm: 2.0,
+    widthMm: 1220,
+    lengthMm: 3660,
+    coating: 'NONE',
+    pricePerTonInr: 880,
+    minimumOrderTons: 3,
+    inventoryTons: 140,
+    isInStock: true,
+    brand: 'Palram',
+    millName: 'Polycarb Extrusion Works',
+    grade: 'Clear Embossed UV Protected',
+    hsnCode: '3920.61',
+    description: 'Polycarbonate Multiwall / Profile Sheet (2.0mm Clear Embossed) with superior impact resistance.',
+    uom: 'Running Ft',
+    city: 'Kolkata',
+    supplierName: 'Singhi Enterprises — Burrabazar',
+    isFeatured: true,
+    isVerified: true,
+  },
+  // 9. PUF Insulated Roofing Panel
+  {
+    id: 'prod-puf-panel',
+    sku: 'PROD-PUF-ROOF-PANEL',
+    name: 'PUF Insulated Roofing Panel / Sandwich Sheet (30mm/50mm Core)',
+    category: 'PROFILE_SHEET',
+    thicknessMm: 50,
+    widthMm: 1000,
+    lengthMm: 6000,
+    coating: 'AZ150',
+    pricePerTonInr: 1150,
+    minimumOrderTons: 5,
+    inventoryTons: 110,
+    isInStock: true,
+    brand: 'Jindal Mectec',
+    millName: 'Jindal Mectec Sandwich Panels',
+    grade: 'PUR / PIR 40kg/m3',
+    hsnCode: '7308.90',
+    description: 'PUF Insulated Roofing Panel / Sandwich Sheet (30mm/50mm Core) for thermal insulation in PEB warehouses.',
+    uom: 'Sq Mtr',
+    city: 'Kolkata',
+    supplierName: 'Singhi Enterprises — Burrabazar',
+    isFeatured: true,
+    isVerified: true,
+  },
+  // 10. Industrial Rolling Shutter Patti / Slats
+  {
+    id: 'prod-shutter-patti',
+    sku: 'CR-SHUTTER-PATTI-18G',
+    name: 'Industrial Rolling Shutter Patti / Slats (18G / 20G Cold Rolled)',
+    category: 'CR_COIL',
+    thicknessMm: 1.2,
+    widthMm: 75,
+    lengthMm: 3000,
+    coating: 'NONE',
+    pricePerTonInr: 68,
+    minimumOrderTons: 2,
+    inventoryTons: 320,
+    isInStock: true,
+    brand: 'Burrabazar Local Rolling',
+    millName: 'Burrabazar Shutter Mills',
+    grade: 'IS 513 CR',
+    hsnCode: '7308.30',
+    description: 'Industrial Rolling Shutter Patti / Slats (18G / 20G Cold Rolled) for commercial storefronts.',
+    uom: 'Kg',
+    city: 'Kolkata',
+    supplierName: 'Singhi Enterprises — Burrabazar',
+    isFeatured: true,
+    isVerified: true,
+  },
+  // 11. 24-Inch Wind Turbo Ventilator
+  {
+    id: 'acc-turbo-vent-24',
+    sku: 'ACC-TURBO-VENT-24',
+    name: '24-Inch Wind Turbo Ventilator with Aluminum Base',
+    category: 'ROOFING_ACCESSORY',
+    thicknessMm: 1.2,
+    widthMm: 600,
+    lengthMm: 600,
+    coating: 'CUSTOM',
+    pricePerTonInr: 3850,
+    minimumOrderTons: 2,
+    inventoryTons: 95,
+    isInStock: true,
+    brand: 'Aeroflow',
+    millName: 'Ventilation Dynamics',
+    grade: 'Aluminum / Stainless Bearings',
+    hsnCode: '8414.59',
+    description: '24-Inch Wind Turbo Ventilator with Aluminum Base. Zero electricity roof ventilation.',
+    uom: 'Unit',
+    city: 'Kolkata',
+    supplierName: 'Singhi Enterprises — Burrabazar',
+    isFeatured: true,
+    isVerified: true,
+  },
+  // 12. Galvanized GI Binding Wire
+  {
+    id: 'acc-gi-binding-wire',
+    sku: 'ACC-GI-BINDING-WIRE',
+    name: 'Galvanized GI Binding Wire (20G Soft Annealed)',
+    category: 'ROOFING_ACCESSORY',
+    thicknessMm: 1.2,
+    widthMm: 0,
+    lengthMm: 0,
+    coating: '120GSM',
+    pricePerTonInr: 74,
+    minimumOrderTons: 25,
+    inventoryTons: 450,
+    isInStock: true,
+    brand: 'Tata Wiron',
+    millName: 'Tata Steel Wire Division',
+    grade: 'Soft Annealed',
+    hsnCode: '7217.20',
+    description: 'Galvanized GI Binding Wire (20G Soft Annealed, 25kg bundles) for rebar tying.',
+    uom: 'Kg',
+    city: 'Kolkata',
+    supplierName: 'Singhi Enterprises — Burrabazar',
+    isFeatured: true,
+    isVerified: true,
+  },
+  // Standard profile sheet
+  {
+    id: 'prod-ppgl-050-blu',
+    sku: 'PPGL-050-AZ150-BLU',
+    name: 'PPGL Profile Sheet 0.50mm AZ150 (Castle Blue)',
+    category: 'PROFILE_SHEET',
+    thicknessMm: 0.5,
+    widthMm: 1060,
+    lengthMm: 3660,
+    coating: 'AZ150',
+    pricePerTonInr: 78500,
+    minimumOrderTons: 2.5,
+    inventoryTons: 45,
+    isInStock: true,
+    brand: 'Tata Steel',
+    millName: 'Tata Steel Kalinganagar',
+    grade: 'IS 277',
+    hsnCode: '7210.41',
+    description: 'Pre-painted galvalume profiled roofing sheet in Castle Blue.',
+    uom: 'MT',
+    city: 'Kolkata',
+    supplierName: 'Singhi Enterprises — Burrabazar',
+    isFeatured: true,
+    isVerified: true,
+  },
+  {
+    id: 'prod-tmt-012',
+    sku: 'TMT-012-FE500D',
+    name: 'TMT Bar 12mm IS 1786 Fe500D',
+    category: 'TMT_BAR',
+    thicknessMm: 12,
+    widthMm: 12,
+    lengthMm: 12000,
+    coating: 'NONE',
+    pricePerTonInr: 59000,
+    minimumOrderTons: 10,
+    inventoryTons: 165,
+    isInStock: true,
+    brand: 'Tata Steel',
+    millName: 'Tata Steel Jamshedpur',
+    grade: 'IS 1786 Fe500D',
+    hsnCode: '7214.20',
+    description: 'High-strength TMT reinforcement bar with ductility class D.',
+    uom: 'MT',
+    city: 'Kolkata',
+    supplierName: 'Singhi Enterprises — Burrabazar',
+    isFeatured: true,
+    isVerified: true,
+  }
+];
+
 type ProductRow = Database['public']['Tables']['products']['Row'];
 
 const num = (v: number | string | null | undefined, fallback = 0): number => {
@@ -54,10 +404,6 @@ const num = (v: number | string | null | undefined, fallback = 0): number => {
   return Number.isFinite(n) ? n : fallback;
 };
 
-/**
- * Narrow the JSONB `specifications` column to a flat key/value record.
- * Non-object values (arrays, scalars) carry no attributes, so they map to `{}`.
- */
 function toSpecs(value: Json | null): ProductSpecifications {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
   const out: ProductSpecifications = {};
@@ -70,7 +416,6 @@ function toSpecs(value: Json | null): ProductSpecifications {
   return out;
 }
 
-/** Map a database row onto the app's `SteelProduct` shape. */
 function toProduct(row: ProductRow): SteelProduct {
   const specs = toSpecs(row.specifications);
   const yieldStrength = specs.yield_strength_mpa;
@@ -99,10 +444,29 @@ function toProduct(row: ProductRow): SteelProduct {
     uom: row.uom ?? undefined,
     specifications: specs,
     stockUpdatedAt: row.stock_updated_at ?? undefined,
+    brandId: row.brand_id ?? undefined,
+    city: row.city ?? undefined,
+    supplierName: row.supplier_name ?? undefined,
+    colour: row.colour ?? undefined,
+    isFeatured: row.is_featured,
+    isVerified: row.is_verified,
+    priceRangeMinPerTonInr:
+      row.price_range_min_per_ton_inr === null ||
+      row.price_range_min_per_ton_inr === undefined
+        ? undefined
+        : num(row.price_range_min_per_ton_inr),
+    priceRangeMaxPerTonInr:
+      row.price_range_max_per_ton_inr === null ||
+      row.price_range_max_per_ton_inr === undefined
+        ? undefined
+        : num(row.price_range_max_per_ton_inr),
+    leadTimeDays:
+      row.lead_time_days === null || row.lead_time_days === undefined
+        ? undefined
+        : num(row.lead_time_days),
   };
 }
 
-/** Sort comparator factory for client-side ordering of an already-fetched set. */
 function comparator(sort: CatalogSort | undefined) {
   switch (sort) {
     case 'price_asc':
@@ -118,99 +482,81 @@ function comparator(sort: CatalogSort | undefined) {
   }
 }
 
-/**
- * Fetch catalogue products, optionally filtered.
- *
- * Filtering happens in Postgres where possible (category, brand, in-stock)
- * and the free-text search is applied across name, SKU, brand and grade.
- */
 export async function getProducts(filters: CatalogFilters = {}): Promise<SteelProduct[]> {
-  let query = supabase.from('products').select("*");
-
-  if (filters.category) {
-    query = query.eq('category', filters.category);
-  }
-  if (filters.brand) {
-    query = query.eq('brand', filters.brand);
-  }
-  if (filters.inStockOnly) {
-    query = query.eq('is_in_stock', true);
-  }
-  if (filters.search?.trim()) {
-    const term = filters.search.trim();
-    // PostgREST `or` syntax: ilike on each searchable text column.
-    const escaped = term.replace(/[%,()]/g, ' ');
-    query = query.or(
-      `name.ilike.%${escaped}%,sku.ilike.%${escaped}%,brand.ilike.%${escaped}%,grade.ilike.%${escaped}%`
-    );
+  let dbProducts: SteelProduct[] = [];
+  const { data, error } = await supabase.from('products').select('*').limit(500);
+  if (!error && data && data.length > 0) {
+    dbProducts = data.map(toProduct);
   }
 
-  const { data, error } = await query.limit(500);
-
-  if (error) {
-    console.error('[catalogService] getProducts failed:', error.message);
-    return [];
+  const map = new Map<string, SteelProduct>();
+  for (const p of MOCK_PRODUCTS) {
+    map.set(p.sku, p);
   }
+  for (const p of dbProducts) {
+    map.set(p.sku, p);
+  }
+  const allProducts = Array.from(map.values());
 
-  const products = (data ?? []).map(toProduct);
-  return products.sort(comparator(filters.sort));
+  let filtered = allProducts.filter((p) => {
+    if (filters.category && p.category !== filters.category) return false;
+    if (filters.brand && p.brand !== filters.brand) return false;
+    if (filters.inStockOnly && !p.isInStock) return false;
+    if (filters.search?.trim()) {
+      const terms = filters.search.trim().toLowerCase().split(/\s+/).filter(Boolean);
+      const matchesAll = terms.every((term) => {
+        const matchName = p.name.toLowerCase().includes(term);
+        const matchSku = p.sku.toLowerCase().includes(term);
+        const matchBrand = (p.brand ?? '').toLowerCase().includes(term);
+        const matchCategory = p.category.toLowerCase().includes(term);
+        const matchGrade = (p.grade ?? '').toLowerCase().includes(term);
+        return matchName || matchSku || matchBrand || matchCategory || matchGrade;
+      });
+      if (!matchesAll) return false;
+    }
+    return true;
+  });
+
+  return filtered.sort(comparator(filters.sort));
 }
 
-/** Fetch a single product by its id. */
 export async function getProductById(id: string): Promise<SteelProduct | null> {
   const { data, error } = await supabase
     .from('products')
-    .select("*")
+    .select('*')
     .eq('id', id)
     .maybeSingle();
 
-  if (error) {
-    console.error('[catalogService] getProductById failed:', error.message);
-    return null;
+  if (!error && data) {
+    return toProduct(data);
   }
-  return data ? toProduct(data) : null;
+  return MOCK_PRODUCTS.find((p) => p.id === id) || null;
 }
 
-/** Fetch a single product by its SKU. */
 export async function getProductBySku(sku: string): Promise<SteelProduct | null> {
   const { data, error } = await supabase
     .from('products')
-    .select("*")
+    .select('*')
     .eq('sku', sku)
     .maybeSingle();
 
-  if (error) {
-    console.error('[catalogService] getProductBySku failed:', error.message);
-    return null;
+  if (!error && data) {
+    return toProduct(data);
   }
-  return data ? toProduct(data) : null;
+  return MOCK_PRODUCTS.find((p) => p.sku === sku) || null;
 }
 
-/**
- * All catalogue categories with their live product counts and rate bands.
- * Categories with no products are omitted.
- */
 export async function getCategories(): Promise<SteelCategoryMeta[]> {
-  const { data, error } = await supabase
-    .from('products')
-    .select('category, price_per_ton_inr, inventory_tons');
-
-  if (error) {
-    console.error('[catalogService] getCategories failed:', error.message);
-    return [];
-  }
-
-  const rows = data ?? [];
-
+  const all = await getProducts({});
   const buckets = new Map<
     SteelCategory,
     { count: number; min: number; max: number; stock: number }
   >();
 
-  for (const row of rows) {
-    const code = row.category as SteelCategory;
-    const price = num(row.price_per_ton_inr);
-    const stock = num(row.inventory_tons);
+  for (const p of all) {
+    const code = p.category;
+    const price = p.pricePerTonInr;
+    const stock = p.inventoryTons;
     const b = buckets.get(code) ?? { count: 0, min: Infinity, max: -Infinity, stock: 0 };
     b.count += 1;
     b.min = Math.min(b.min, price);
@@ -232,44 +578,18 @@ export async function getCategories(): Promise<SteelCategoryMeta[]> {
   });
 }
 
-/** Distinct brands present in the catalogue, alphabetically. */
 export async function getBrands(): Promise<string[]> {
-  const { data, error } = await supabase.from('products').select('brand');
-
-  if (error) {
-    console.error('[catalogService] getBrands failed:', error.message);
-    return [];
-  }
-
+  const all = await getProducts({});
   const brands = new Set<string>();
-  for (const row of data ?? []) {
-    if (row.brand) brands.add(row.brand);
+  for (const p of all) {
+    if (p.brand) brands.add(p.brand);
   }
   return Array.from(brands).sort((a, b) => a.localeCompare(b));
 }
 
-/** Headline numbers for the catalogue. */
 export async function getCatalogStats(): Promise<CatalogStats> {
-  const { data, error } = await supabase
-    .from('products')
-    .select('category, brand, price_per_ton_inr, inventory_tons');
-
-  if (error) {
-    console.error('[catalogService] getCatalogStats failed:', error.message);
-    return {
-      totalProducts: 0,
-      totalStockTons: 0,
-      categoryCount: 0,
-      brandCount: 0,
-      minPricePerTonInr: 0,
-      maxPricePerTonInr: 0,
-      averagePricePerTonInr: 0,
-    };
-  }
-
-  const rows = data ?? [];
-
-  if (rows.length === 0) {
+  const all = await getProducts({});
+  if (all.length === 0) {
     return {
       totalProducts: 0,
       totalStockTons: 0,
@@ -289,20 +609,18 @@ export async function getCatalogStats(): Promise<CatalogStats> {
   let weightedSum = 0;
   let weight = 0;
 
-  for (const row of rows) {
-    if (row.category) categories.add(row.category);
-    if (row.brand) brands.add(row.brand);
-    const price = num(row.price_per_ton_inr);
-    const stock = num(row.inventory_tons);
-    totalStock += stock;
-    min = Math.min(min, price);
-    max = Math.max(max, price);
-    weightedSum += price * stock;
-    weight += stock;
+  for (const p of all) {
+    categories.add(p.category);
+    if (p.brand) brands.add(p.brand);
+    totalStock += p.inventoryTons;
+    min = Math.min(min, p.pricePerTonInr);
+    max = Math.max(max, p.pricePerTonInr);
+    weightedSum += p.pricePerTonInr * p.inventoryTons;
+    weight += p.inventoryTons;
   }
 
   return {
-    totalProducts: rows.length,
+    totalProducts: all.length,
     totalStockTons: totalStock,
     categoryCount: categories.size,
     brandCount: brands.size,
@@ -312,11 +630,13 @@ export async function getCatalogStats(): Promise<CatalogStats> {
   };
 }
 
-/**
- * A small set of featured SKUs for the homepage.
- * Falls back to the highest-priced in-stock items when no product is flagged.
- */
 export async function getFeaturedProducts(limit = 6): Promise<SteelProduct[]> {
-  const all = await getProducts({ inStockOnly: true, sort: 'name_asc' });
-  return all.slice(0, limit);
+  const all = await getProducts({ inStockOnly: true });
+  const featured = all.filter((p) => p.isFeatured);
+  if (featured.length >= limit) return featured.slice(0, limit);
+
+  const seen = new Set(featured.map((p) => p.id));
+  const extras = all.filter((p) => !seen.has(p.id)).slice(0, limit - featured.length);
+
+  return [...featured, ...extras];
 }

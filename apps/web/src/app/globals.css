@@ -1,26 +1,633 @@
 @import "tailwindcss";
 
+/* ==========================================================================
+   STEELSETU DESIGN SYSTEM
+   --------------------------------------------------------------------------
+   Two layers, one token set.
+
+   Layer 1 — CINEMATIC MARKETING (dark, immersive, 3D allowed)
+     Used by: /, /about, /calculators, /prices, /blog, /user-login
+     Surfaces: --ss-ink, --ss-graphite, --ss-steel
+     Effects: aurora gradients, glassmorphism, parallax, custom cursor
+
+   Layer 2 — CLEAN PRODUCT & COMMUNITY (light, crisp, no 3D)
+     Used by: /products, /products/[slug], /suppliers, /compare,
+              /dashboard/*, /trade-desk
+     Surfaces: #FFFFFF, --ss-light
+     Effects: none 3D, no custom cursor, no parallax
+
+   A page opts into a layer by putting `data-layer="marketing"` or
+   `data-layer="product"` on a wrapping element. Everything below keys off
+   that attribute so a route never mixes the two visual languages.
+   ========================================================================== */
+
+@keyframes steel-sheen {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.steel-sheen-animate {
+  background-size: 200% 100%;
+  animation: steel-sheen 3s linear infinite;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* --- Brand palette ---------------------------------------------------- */
+  --ss-blue: #2563eb;          /* Trust Blue — primary */
+  --ss-blue-deep: #1d4ed8;
+  --ss-orange: #f97316;        /* Molten Steel Heat — CTA accent */
+  --ss-orange-2: #ea580c;
+  --ss-ink: #05060a;           /* Cinematic Forge Black */
+  --ss-graphite: #0f1117;      /* Dark Graphite Surface */
+  --ss-steel: #1b2030;         /* Brushed Metallic Border/Card Surface */
+  --ss-light: #f7f8fb;         /* Clean Product Layer Background */
+  --ss-line: #e5e7eb;
+  --ss-text: #0b1220;
+  --ss-muted: #5b6478;
+
+  /* --- Derived tints ---------------------------------------------------- */
+  --ss-blue-soft: rgba(37, 99, 235, 0.14);
+  --ss-orange-soft: rgba(249, 115, 22, 0.14);
+  --ss-glass-bg: rgba(255, 255, 255, 0.05);
+  --ss-glass-border: rgba(255, 255, 255, 0.1);
+  --ss-glass-shadow: 0 24px 70px -30px rgba(0, 0, 0, 0.85);
+
+  /* --- Motion ----------------------------------------------------------- */
+  --ss-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ss-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ss-dur-fast: 160ms;
+  --ss-dur: 320ms;
+  --ss-dur-slow: 620ms;
+
+  /* --- Type scale ------------------------------------------------------- */
+  --ss-display: var(--font-sora), 'Space Grotesk', system-ui, sans-serif;
+  --ss-headline: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+  --ss-body: var(--font-inter), 'Inter', system-ui, sans-serif;
+  --ss-deva: var(--font-noto-deva), 'Noto Sans Devanagari', system-ui, sans-serif;
+
+  --background: var(--ss-ink);
+  --foreground: #f8fafc;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  --color-ss-blue: var(--ss-blue);
+  --color-ss-blue-deep: var(--ss-blue-deep);
+  --color-ss-orange: var(--ss-orange);
+  --color-ss-orange-2: var(--ss-orange-2);
+  --color-ss-ink: var(--ss-ink);
+  --color-ss-graphite: var(--ss-graphite);
+  --color-ss-steel: var(--ss-steel);
+  --color-ss-light: var(--ss-light);
+  --color-ss-line: var(--ss-line);
+  --color-ss-text: var(--ss-text);
+  --color-ss-muted: var(--ss-muted);
+
+  --font-sans: var(--ss-body);
+  --font-display: var(--ss-display);
+  --font-headline: var(--ss-headline);
+  --font-deva: var(--ss-deva);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    border-color: var(--ss-line);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--ss-body);
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    overflow-x: hidden;
+  }
+
+  /* Prices, gauges and weights must line up in columns. */
+  .ss-tabular,
+  table td,
+  table th,
+  [data-numeric] {
+    font-variant-numeric: tabular-nums;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ss-blue);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Layer 2 pages are always light. */
+  [data-layer='product'] {
+    background: #ffffff;
+    color: var(--ss-text);
+  }
+
+  [data-layer='product'] ::selection {
+    background: var(--ss-blue);
+    color: #fff;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ==========================================================================
+   MARKETING LAYER — ambient effects
+   ========================================================================== */
+
+[data-layer='marketing'] {
+  background: var(--ss-ink);
+  color: #f8fafc;
+}
+
+/* Rich Industrial Grid & Atmospheric Backdrop */
+.ss-industrial-grid {
+  position: relative;
+  background-color: var(--ss-ink);
+  background-image:
+    radial-gradient(ellipse at 50% -20%, rgba(249, 115, 22, 0.28), transparent 70%),
+    radial-gradient(ellipse at 10% 80%, rgba(37, 99, 235, 0.18), transparent 60%),
+    linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px;
+}
+
+[data-layer='marketing'] ::selection {
+  background: var(--ss-orange);
+  color: #fff;
+}
+
+/* Aurora: two soft radial washes in the brand colours, plus a fine grain. */
+.ss-aurora {
+  position: relative;
+  isolation: isolate;
+}
+
+.ss-aurora::before {
+  content: '';
+  position: absolute;
+  inset: -20%;
+  z-index: -2;
+  background:
+    radial-gradient(48rem 32rem at 18% 8%, rgba(37, 99, 235, 0.22), transparent 62%),
+    radial-gradient(42rem 30rem at 84% 22%, rgba(249, 115, 22, 0.16), transparent 60%),
+    radial-gradient(52rem 38rem at 50% 96%, rgba(37, 99, 235, 0.12), transparent 64%);
+  animation: ss-drift 26s var(--ss-ease-out) infinite alternate;
+  pointer-events: none;
+}
+
+.ss-aurora::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.035;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@keyframes ss-drift {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  50%  { transform: translate3d(2%, -2%, 0) scale(1.06); }
+  100% { transform: translate3d(-2%, 2%, 0) scale(1.02); }
+}
+
+/* Glassmorphism — the marketing layer's primary surface. */
+.ss-glass {
+  background: var(--ss-glass-bg);
+  border: 1px solid var(--ss-glass-border);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  box-shadow: var(--ss-glass-shadow);
+}
+
+/* Brushed metal: fine horizontal striations over a dark base. */
+.ss-brushed {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.022) 0px,
+      rgba(255, 255, 255, 0.022) 1px,
+      transparent 1px,
+      transparent 3px
+    ),
+    linear-gradient(160deg, var(--ss-steel) 0%, #12161f 55%, #0b0e15 100%);
+}
+
+/* Molten edge glow — used on the primary CTA and the final banner. */
+.ss-molten {
+  position: relative;
+  background: linear-gradient(135deg, var(--ss-orange) 0%, var(--ss-orange-2) 100%);
+  box-shadow:
+    0 0 0 1px rgba(249, 115, 22, 0.35),
+    0 10px 30px -8px rgba(249, 115, 22, 0.55);
+  transition: transform var(--ss-dur) var(--ss-ease-out),
+    box-shadow var(--ss-dur) var(--ss-ease-out);
+}
+
+.ss-molten::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.32) 0%,
+    transparent 42%,
+    transparent 58%,
+    rgba(255, 255, 255, 0.14) 100%
+  );
+  pointer-events: none;
+}
+
+.ss-molten:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 0 1px rgba(249, 115, 22, 0.5),
+    0 18px 44px -10px rgba(249, 115, 22, 0.72);
+}
+
+/* Text gradient: forge-orange into trust-blue. */
+.ss-text-forge {
+  background: linear-gradient(100deg, #fbbf24 0%, var(--ss-orange) 34%, #fb923c 58%, var(--ss-blue) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Hairline gradient border for floating panels. */
+.ss-hairline {
+  position: relative;
+}
+
+.ss-hairline::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    120deg,
+    rgba(37, 99, 235, 0.55),
+    rgba(249, 115, 22, 0.42),
+    rgba(255, 255, 255, 0.08)
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   ANIMATION PRIMITIVES
+   ========================================================================== */
+
+@keyframes ss-fade-up {
+  from { opacity: 0; transform: translate3d(0, 18px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes ss-float {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%      { transform: translate3d(0, -12px, 0); }
+}
+
+@keyframes ss-pulse-ring {
+  0%   { transform: scale(0.92); opacity: 0.7; }
+  70%  { transform: scale(1.35); opacity: 0; }
+  100% { transform: scale(1.35); opacity: 0; }
+}
+
+@keyframes ss-marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+@keyframes ss-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes ss-shimmer {
+  from { background-position: -200% 0; }
+  to   { background-position: 200% 0; }
+}
+
+.ss-fade-up {
+  animation: ss-fade-up var(--ss-dur-slow) var(--ss-ease-out) both;
+}
+
+.ss-float {
+  animation: ss-float 7s ease-in-out infinite;
+}
+
+.ss-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: ss-marquee 42s linear infinite;
+}
+
+.ss-marquee:hover .ss-marquee-track {
+  animation-play-state: paused;
+}
+
+.ss-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+  background-size: 200% 100%;
+  animation: ss-shimmer 2.4s linear infinite;
+}
+
+/* Scroll-reveal: elements start hidden and are released by IntersectionObserver. */
+.ss-reveal {
+  opacity: 0;
+  transform: translate3d(0, 22px, 0);
+  transition:
+    opacity 700ms var(--ss-ease-out),
+    transform 700ms var(--ss-ease-out);
+  will-change: opacity, transform;
+}
+
+.ss-reveal.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Hover tilt is applied by JS via CSS custom properties. */
+.ss-tilt {
+  transform: perspective(900px)
+    rotateX(var(--tilt-x, 0deg))
+    rotateY(var(--tilt-y, 0deg))
+    translate3d(0, 0, 0);
+  transition: transform 400ms var(--ss-ease-out);
+  transform-style: preserve-3d;
+}
+
+.ss-tilt-lift:hover {
+  transform: perspective(900px)
+    rotateX(var(--tilt-x, 0deg))
+    rotateY(var(--tilt-y, 0deg))
+    translate3d(0, -6px, 0);
+}
+
+/* ==========================================================================
+   CUSTOM CURSOR — marketing layer only, pointer devices only
+   ========================================================================== */
+
+.ss-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+  width: 26px;
+  height: 26px;
+  margin: -13px 0 0 -13px;
+  border-radius: 9999px;
+  border: 1.5px solid rgba(249, 115, 22, 0.85);
+  background: rgba(249, 115, 22, 0.08);
+  transition: width 200ms var(--ss-ease-out),
+    height 200ms var(--ss-ease-out),
+    margin 200ms var(--ss-ease-out),
+    background 200ms var(--ss-ease-out),
+    border-color 200ms var(--ss-ease-out);
+  mix-blend-mode: screen;
+}
+
+.ss-cursor.is-active {
+  width: 46px;
+  height: 46px;
+  margin: -23px 0 0 -23px;
+  background: rgba(37, 99, 235, 0.16);
+  border-color: rgba(37, 99, 235, 0.9);
+}
+
+@media (hover: none), (pointer: coarse) {
+  .ss-cursor {
+    display: none !important;
+  }
+}
+
+/* ==========================================================================
+   ACCESSIBILITY — reduced motion kills every 3D, parallax and cursor effect
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .ss-aurora::before,
+  .ss-float,
+  .ss-marquee-track {
+    animation: none !important;
+  }
+
+  .ss-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .ss-tilt,
+  .ss-tilt-lift {
+    transform: none !important;
+  }
+
+  .ss-cursor {
+    display: none !important;
+  }
+}
+
+/* ==========================================================================
+   LOGO EMBLEM — rotating coil ring around a glowing suspension bridge
+   ========================================================================== */
+
+@keyframes ss-ring-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes ss-ring-spin-rev {
+  to { transform: rotate(-360deg); }
+}
+
+@keyframes ss-bridge-glow {
+  0%, 100% { opacity: 0.45; }
+  50%      { opacity: 1; }
+}
+
+@keyframes ss-cable-sway {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(1.1px); }
+}
+
+.ss-logo-ring {
+  transform-origin: 32px 32px;
+  animation: ss-ring-spin 14s linear infinite;
+}
+
+.ss-logo-ring-rev {
+  transform-origin: 32px 32px;
+  animation: ss-ring-spin-rev 20s linear infinite;
+}
+
+.ss-logo-glow {
+  animation: ss-bridge-glow 3.4s ease-in-out infinite;
+}
+
+.ss-logo-cable {
+  animation: ss-cable-sway 4.6s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   HERO — structural frame, particles, molten edge
+   ========================================================================== */
+
+.ss-hero-frame {
+  transform: perspective(1400px)
+    rotateX(var(--tilt-x, 0deg))
+    rotateY(var(--tilt-y, 0deg));
+  transition: transform 700ms var(--ss-ease-out);
+  will-change: transform;
+  transform-style: preserve-3d;
+}
+
+@keyframes ss-particle-rise {
+  0%   { transform: translate3d(0, 0, 0); opacity: 0; }
+  12%  { opacity: 1; }
+  50%  { transform: translate3d(9px, -34px, 0); opacity: 0.85; }
+  88%  { opacity: 0.5; }
+  100% { transform: translate3d(-6px, -76px, 0); opacity: 0; }
+}
+
+.ss-particle {
+  animation: ss-particle-rise 13s linear infinite;
+}
+
+@keyframes ss-molten-pulse {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 1; }
+}
+
+.ss-molten-edge {
+  animation: ss-molten-pulse 3.6s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   TICKER
+   ========================================================================== */
+
+.ss-ticker-track {
+  display: flex;
+  width: max-content;
+  animation: ss-marquee 46s linear infinite;
+}
+
+.ss-ticker:hover .ss-ticker-track {
+  animation-play-state: paused;
+}
+
+/* ==========================================================================
+   UTILITIES
+   ========================================================================== */
+
+.ss-container {
+  width: 100%;
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .ss-container {
+    padding-inline: 2rem;
+  }
+}
+
+.ss-h1 {
+  font-family: var(--ss-display);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+.ss-h2 {
+  font-family: var(--ss-display);
+  font-weight: 600;
+  letter-spacing: -0.022em;
+  line-height: 1.12;
+}
+
+.ss-eyebrow {
+  font-family: var(--ss-headline);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.ss-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Layer-2 (light) product cards. */
+.ss-card-light {
+  background: #ffffff;
+  border: 1px solid var(--ss-line);
+  border-radius: 1rem;
+  transition: border-color var(--ss-dur) var(--ss-ease-out),
+    box-shadow var(--ss-dur) var(--ss-ease-out),
+    transform var(--ss-dur) var(--ss-ease-out);
+}
+
+.ss-card-light:hover {
+  border-color: rgba(37, 99, 235, 0.4);
+  box-shadow: 0 18px 40px -24px rgba(11, 18, 32, 0.32);
+  transform: translateY(-3px);
+}
+
+/* Touch targets. */
+.ss-tap {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Hide scrollbar but keep scrolling (mobile galleries). */
+.ss-no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.ss-no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Pure CSS/SVG Industrial Backdrop & Grid Texture */
+.ss-industrial-grid {
+  background-color: #050811;
+  background-image:
+    radial-gradient(circle at 50% 0%, rgba(249, 115, 22, 0.14), transparent 55%),
+    radial-gradient(circle at 15% 25%, rgba(37, 99, 235, 0.18), transparent 45%),
+    linear-gradient(to right, rgba(30, 41, 59, 0.18) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(30, 41, 59, 0.18) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 4rem 4rem, 4rem 4rem;
 }

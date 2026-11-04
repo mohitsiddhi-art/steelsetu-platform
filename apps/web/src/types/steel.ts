@@ -6,7 +6,8 @@ export type SteelCategory =
   | 'PROFILE_SHEET'  // Roofing / Cladding
   | 'GALVALUME_COIL' // Bare Galvalume
   | 'TMT_BAR'        // Reinforcement bars
-  | 'ANGLE_CHANNEL'; // Structural sections
+  | 'ANGLE_CHANNEL'  // Structural sections
+  | 'ROOFING_ACCESSORY'; // Roofing Accessories & Fasteners
 
 export type CoatingStandard = 'AZ70' | 'AZ150' | '120GSM' | '275GSM' | '80GSM' | 'NONE' | 'CUSTOM';
 
@@ -38,6 +39,26 @@ export interface SteelProduct {
   uom?: string;
   specifications?: ProductSpecifications;
   stockUpdatedAt?: string;
+
+  // --- Platform layer (added 2026-10-21, migration 003) ---
+  /** FK to the `brands` directory row. */
+  brandId?: string;
+  /** Dispatch city, e.g. "Jamshedpur" / "Howrah". */
+  city?: string;
+  /** The supplier behind this SKU, e.g. "Tata Steel — Jamshedpur Works". */
+  supplierName?: string;
+  /** Surface colour, e.g. "Grey" / "Bare Galvalume" / "Blue". */
+  colour?: string;
+  /** True when the SKU is promoted on the homepage showcase. */
+  isFeatured?: boolean;
+  /** True when the listing has been verified by the Steelsetu desk. */
+  isVerified?: boolean;
+  /** Low end of the indicative per-ton band, in rupees. */
+  priceRangeMinPerTonInr?: number;
+  /** High end of the indicative per-ton band, in rupees. */
+  priceRangeMaxPerTonInr?: number;
+  /** Indicative dispatch lead time, in days. */
+  leadTimeDays?: number;
 }
 
 /** A product category plus its live catalogue count. */

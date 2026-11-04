@@ -4,7 +4,7 @@
     {
       "name": "web",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev", "--workspace=@steelsetu/web"],
+      "runtimeArgs": ["run", "dev:web"],
       "port": 3000
     }
   ]

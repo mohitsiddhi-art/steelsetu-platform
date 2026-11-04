@@ -30,8 +30,11 @@ import {
  * closed if this guard is ever bypassed.
  */
 
-/** Where an unauthenticated visitor is sent. */
+/** Where an unauthenticated staff visitor is sent. */
 const LOGIN_PATH = '/login';
+
+/** Where an unauthenticated portal visitor is sent. */
+const PORTAL_LOGIN_PATH = '/user-login';
 
 /** A cookie the Auth client wants to write back to the browser. */
 interface PendingCookie {
@@ -82,26 +85,26 @@ function createRequestScopedClient(
 }
 
 /**
- * Verify the session and decide whether it belongs to a staff member.
+ * Verify the session and report who is signed in.
  *
  * `getClaims()` validates the access token's signature against the Auth
  * server's signing key and returns the *verified* claims. The staff flag is
  * read from those claims, so it cannot be forged by editing the cookie.
  */
-async function isStaffRequest(
+async function readSession(
   request: NextRequest,
   pending: PendingCookie[]
-): Promise<boolean> {
+): Promise<{ signedIn: boolean; staff: boolean }> {
   const supabase = createRequestScopedClient(request, pending);
 
   const { data, error } = await supabase.auth.getClaims();
 
-  if (error || !data?.claims) return false;
+  if (error || !data?.claims) return { signedIn: false, staff: false };
 
   const appMetadata = (data.claims as { app_metadata?: { staff?: unknown } })
     .app_metadata;
 
-  return appMetadata?.staff === true;
+  return { signedIn: true, staff: appMetadata?.staff === true };
 }
 
 /**
@@ -155,23 +158,42 @@ export async function proxy(request: NextRequest) {
     isRfqApi && (request.method === 'GET' || request.method === 'HEAD');
   const isTradeDesk =
     pathname === '/trade-desk' || pathname.startsWith('/trade-desk/');
+  // The portal dashboard is for any signed-in user, buyer or seller.
+  const isDashboard =
+    pathname === '/dashboard' || pathname.startsWith('/dashboard/');
 
-  if (!isRfqApiRead && !isTradeDesk) {
+  if (!isRfqApiRead && !isTradeDesk && !isDashboard) {
     return NextResponse.next();
   }
 
   const pending: PendingCookie[] = [];
 
-  let staff = false;
+  let session = { signedIn: false, staff: false };
   try {
-    staff = await isStaffRequest(request, pending);
+    session = await readSession(request, pending);
   } catch (error) {
-    // Fail closed: an unexpected error must not unlock the ledger.
-    console.error('[proxy] staff check failed:', error);
-    staff = false;
+    // Fail closed: an unexpected error must not unlock anything.
+    console.error('[proxy] session check failed:', error);
+    session = { signedIn: false, staff: false };
   }
 
-  if (!staff) {
+  // --- The portal: any signed-in user gets in --------------------------------
+  if (isDashboard) {
+    if (session.signedIn) {
+      return applyPendingCookies(NextResponse.next(), pending);
+    }
+
+    const portalLoginUrl = request.nextUrl.clone();
+    portalLoginUrl.pathname = PORTAL_LOGIN_PATH;
+    portalLoginUrl.search = '';
+    // Remember where they were headed so sign-in can bounce them back.
+    portalLoginUrl.searchParams.set('next', `${pathname}${search}`);
+
+    return applyPendingCookies(NextResponse.redirect(portalLoginUrl), pending);
+  }
+
+  // --- The trade desk and the inquiry feed: staff only ----------------------
+  if (!session.staff) {
     if (isRfqApi) {
       // An API client gets a 401, not a redirect to a login page.
       return applyPendingCookies(
@@ -193,5 +215,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/trade-desk/:path*', '/api/rfq'],
+  matcher: ['/trade-desk/:path*', '/dashboard/:path*', '/api/rfq'],
 };

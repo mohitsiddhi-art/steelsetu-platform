@@ -1,57 +1,86 @@
-﻿import Navbar from '@/components/layout/Navbar';
-import InventoryTable from '@/components/common/InventoryTable';
-import WeightCalculator from '@/components/common/WeightCalculator';
-import TradingStats from '@/components/common/TradingStats';
+import type { Metadata } from 'next';
+import MarketingHeader from '@/components/layout/MarketingHeader';
+import SiteFooter from '@/components/layout/SiteFooter';
+import MegaSearch from '@/components/marketing/MegaSearch';
+import TrustShieldBar from '@/components/marketing/TrustShieldBar';
+import PriceTicker from '@/components/marketing/PriceTicker';
+import SplitMarketplace from '@/components/marketing/SplitMarketplace';
+import CalculatorPreview from '@/components/marketing/CalculatorPreview';
+import MandiBulletin from '@/components/marketing/MandiBulletin';
+import MetricsSection from '@/components/marketing/MetricsSection';
+import TestimonialsCarousel from '@/components/marketing/TestimonialsCarousel';
+import FinalCta from '@/components/marketing/FinalCta';
 import { getFeaturedProducts } from '@/services/catalogService';
+import { getFeaturedBrands, getMarketRates } from '@/services/platformService';
 
-/**
- * The dashboard reads live spot rates and stock from Supabase, so it must not
- * be prerendered at build time — a baked-in snapshot of prices would be
- * misleading by the time the page is served.
- */
 export const instant = false;
 
+export const metadata: Metadata = {
+  title: 'Steelsetu | Alibaba-Grade B2B Industrial Steel Trading & Supply Platform',
+  description:
+    'Build the Right Connection. Source the Right Steel. Post one requirement and get verified quotes for TMT bars, MS pipes, GI/PPGL roofing sheets, plates and coils from Indian mills across 25+ cities.',
+  alternates: { canonical: '/' },
+};
+
 export default async function HomePage() {
-  const products = await getFeaturedProducts();
-  const totalStockTons = products.reduce((acc, curr) => acc + curr.inventoryTons, 0);
+  const [products, brands, rates] = await Promise.all([
+    getFeaturedProducts(),
+    getFeaturedBrands(),
+    getMarketRates(),
+  ]);
+
+  const showcaseBrands = brands.length > 0 ? brands : [];
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Organization',
+        '@id': 'https://steelsetu.com/#organization',
+        name: 'Steelsetu',
+        legalName: 'Singhi Enterprises',
+        url: 'https://steelsetu.com',
+        logo: 'https://steelsetu.com/icon.png',
+        description:
+          'B2B industrial steel trading and supply platform operated by Singhi Enterprises, Burrabazar, Kolkata.',
+        email: 'hello@steelsetu.com',
+        telephone: '+91-98830-51500',
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: 'Maharshi Debendra Road, Burrabazar',
+          addressLocality: 'Kolkata',
+          addressRegion: 'West Bengal',
+          postalCode: '700007',
+          addressCountry: 'IN',
+        },
+        areaServed: { '@type': 'Country', name: 'India' },
+      },
+    ],
+  };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
-      <Navbar />
+    <div data-layer="marketing" className="relative min-h-screen ss-industrial-grid text-slate-100">
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-10 space-y-8">
-        <div className="border-b border-slate-800 pb-8">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight text-white">
-                B2B Steel & Coil Exchange
-              </h1>
-              <p className="text-slate-400 mt-1">
-                Verified inventory of GI sheets, PPGL coils, and profile roofing.
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-950/60 border border-emerald-800 text-emerald-400">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                Spot Trading Active
-              </span>
-            </div>
-          </div>
-        </div>
+      <MarketingHeader />
 
-        <TradingStats totalTons={totalStockTons} productCount={products.length} />
-
-        <WeightCalculator />
-
-        <section id="catalog" className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-slate-200">Spot Inventory</h2>
-            <span className="text-xs text-slate-400">All prices ex-mill / INR per Ton</span>
-          </div>
-
-          <InventoryTable products={products} />
-        </section>
+      <main className="pt-20">
+        <MegaSearch />
+        <TrustShieldBar />
+        <PriceTicker rates={rates} />
+        <SplitMarketplace products={products} />
+        <CalculatorPreview />
+        <MandiBulletin />
+        <MetricsSection />
+        <TestimonialsCarousel />
+        <FinalCta />
       </main>
+
+      <SiteFooter tone="dark" />
     </div>
   );
 }

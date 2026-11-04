@@ -1,0 +1,1 @@
+- [Quality claims schema](quality-claims.md) — schema for quality, dispute, and credit-note resolutions

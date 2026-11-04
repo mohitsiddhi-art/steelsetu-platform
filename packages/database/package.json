@@ -11,6 +11,7 @@
     "db:migrate:status": "node migrate.js --status",
     "db:seed": "tsx prisma/seed.ts",
     "db:seed:catalog": "node seed-catalog.js",
+    "db:seed:platform": "node seed-platform.js",
     "db:provision-staff": "node provision-staff.js"
   },
   "dependencies": {

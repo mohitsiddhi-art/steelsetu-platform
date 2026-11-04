@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { LogOut, ShieldCheck } from 'lucide-react';
 import { signOutAction } from '@/app/actions/auth';
 import { getStaffIdentity } from '@/services/authService';
+import SteelsetuLogo from '@/components/brand/SteelsetuLogo';
+import LanguageToggle from '@/components/brand/LanguageToggle';
 
 /**
  * The site header.
@@ -17,12 +19,7 @@ export default async function Navbar() {
   return (
     <header className="w-full border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded bg-blue-600 flex items-center justify-center font-bold text-white tracking-wider">
-            S
-          </div>
-          <span className="text-xl font-bold tracking-tight text-white">Steelsetu</span>
-        </Link>
+        <SteelsetuLogo tone="dark" variant="full" size={38} />
         <nav className="flex items-center gap-6 text-sm text-slate-300">
           <Link href="/" className="hover:text-white transition-colors">Dashboard</Link>
           <Link href="/products" className="hover:text-white transition-colors">Catalogue</Link>
@@ -32,6 +29,7 @@ export default async function Navbar() {
           </Link>
         </nav>
         <div className="flex items-center gap-3">
+          <LanguageToggle />
           {staff ? (
             <>
               <span className="hidden sm:inline-flex items-center gap-1.5 text-xs text-slate-300 border border-emerald-900/70 bg-emerald-950/40 px-2.5 py-1 rounded-md">

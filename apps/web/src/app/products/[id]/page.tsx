@@ -165,7 +165,7 @@ export default async function ProductDetailPage({ params }: ProductDetailProps) 
                   <span className="font-mono text-3xl font-bold text-white">
                     {formatInr(product.pricePerTonInr)}
                   </span>
-                  <span className="text-xs text-slate-500">/ MT</span>
+                  <span className="text-xs text-slate-500">/{product.uom || 'MT'}</span>
                 </div>
                 <p className="mt-1 text-[10px] text-slate-600">
                   Exclusive of GST, freight and loading
@@ -179,13 +179,13 @@ export default async function ProductDetailPage({ params }: ProductDetailProps) 
                     Available stock
                   </span>
                   <span className="font-mono font-semibold text-emerald-400">
-                    {formatTons(product.inventoryTons)} MT
+                    {product.inventoryTons} {product.uom === 'MT' ? 'MT' : (product.uom || 'Pcs')}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-slate-400">Minimum order</span>
                   <span className="font-mono font-semibold text-slate-200">
-                    {formatTons(product.minimumOrderTons)} MT
+                    {product.minimumOrderTons} {product.uom || 'MT'}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-xs">
