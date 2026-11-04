@@ -1,10 +1,14 @@
 import Navbar from '@/components/layout/Navbar';
 import TradeDeskCrmClient from '@/components/crm/TradeDeskCrmClient';
 import { getAllRfqs } from '@/services/rfqService';
+import { getCurrentProfile } from '@/services/userService';
 
 export const instant = false;
 
 export default async function TradeDeskPage() {
+  const profile = await getCurrentProfile();
+  const userIdentifier = profile?.id || 'anonymous';
+
   let initialRfqs: any[] = [];
   try {
     initialRfqs = await getAllRfqs();
@@ -16,7 +20,7 @@ export default async function TradeDeskPage() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
       <Navbar />
-      <TradeDeskCrmClient initialRfqs={initialRfqs} />
+      <TradeDeskCrmClient initialRfqs={initialRfqs} userIdentifier={userIdentifier} />
     </div>
   );
 }

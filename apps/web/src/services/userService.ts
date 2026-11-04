@@ -172,11 +172,14 @@ export async function createProfileForUser(
 ): Promise<UserProfile | null> {
   const supabase = await createSupabaseServerClient();
 
+  const defaultFirstName = email ? email.split('@')[0] : 'Steel Trader';
+  const formattedName = defaultFirstName.charAt(0).toUpperCase() + defaultFirstName.slice(1);
+
   const { data, error } = await supabase
     .from('user_profiles')
     .insert({
       user_id: userId,
-      first_name: extra?.firstName || 'Steel',
+      first_name: extra?.firstName || formattedName,
       last_name: extra?.lastName ?? null,
       email,
       role,

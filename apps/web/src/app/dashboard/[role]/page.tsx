@@ -51,6 +51,9 @@ export default async function DashboardOverviewPage({
     redirect(`/dashboard/${role}`);
   }
 
+  // Calculate Display Name dynamically
+  const displayName = profile.firstName || profile.company || 'Steel Trader';
+
   // The four counted sections are read in parallel — they are independent
   // queries and each is a single small row set scoped by RLS.
   const [wishlist, inquiries, tickets, searches, rfqs] = await Promise.all([
@@ -94,7 +97,7 @@ export default async function DashboardOverviewPage({
           <div className="min-w-0">
             <p className="ss-eyebrow text-ss-orange">{OVERVIEW_COPY.eyebrow.en}</p>
             <h1 className="ss-h2 mt-2 text-[1.75rem] text-ss-text sm:text-[2.1rem]">
-              {DASHBOARD_COPY.greeting.en} {profile.firstName}
+              {DASHBOARD_COPY.greeting.en} {displayName}
             </h1>
             <p className="mt-2.5 max-w-xl text-[0.9rem] leading-relaxed text-ss-muted">
               {role === 'seller'
