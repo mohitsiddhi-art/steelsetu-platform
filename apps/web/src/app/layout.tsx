@@ -1,30 +1,7 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, Sora, Space_Grotesk } from 'next/font/google';
 import { LanguageProvider } from '@/context/LanguageContext';
 import { GlobalModalProvider } from '@/context/GlobalModalContext';
 import './globals.css';
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-});
-
-const sora = Sora({
-  subsets: ['latin'],
-  variable: '--font-sora',
-  display: 'swap',
-  weight: ['400', '500', '600', '700', '800'],
-});
-
-const spaceGrotesk = Space_Grotesk({
-  subsets: ['latin'],
-  variable: '--font-space-grotesk',
-  display: 'swap',
-  weight: ['400', '500', '600', '700'],
-});
-
-const notoDevaVar = '';
 
 const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://steelsetu.com';
 
@@ -81,17 +58,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${inter.variable} ${sora.variable} ${spaceGrotesk.variable}`}
-    >
+    <html lang="en">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&family=Sora:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         />
+        <style>{`
+          :root {
+            --font-inter: 'Inter', sans-serif;
+            --font-sora: 'Sora', sans-serif;
+            --font-space-grotesk: 'Space Grotesk', sans-serif;
+          }
+        `}</style>
       </head>
       <body className="antialiased">
         <LanguageProvider>
