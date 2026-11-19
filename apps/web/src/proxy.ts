@@ -7,6 +7,13 @@ import {
   supabaseAnonKey,
   supabaseUrl,
 } from '@/lib/supabaseConfig';
+import {
+  ADMIN_SESSION_COOKIE,
+  verifyAdminSession,
+} from '@/lib/adminSession';
+
+/** Where an unauthenticated admin/staff visitor is sent. */
+const ADMIN_LOGIN_PATH = '/admin/login';
 
 /**
  * Auth guard for the staff-only surfaces.
@@ -162,8 +169,41 @@ export async function proxy(request: NextRequest) {
   const isDashboard =
     pathname === '/dashboard' || pathname.startsWith('/dashboard/');
 
-  if (!isRfqApiRead && !isTradeDesk && !isDashboard) {
+  // The admin ERP portals: `/admin` (including `/admin/login` and
+  // `/admin/logout`), and the `/staff` permission screen.
+  const isAdminLoginPath = pathname === '/admin/login';
+  const isAdmin =
+    (pathname === '/admin' || pathname.startsWith('/admin/')) &&
+    !isAdminLoginPath;
+  const isStaff =
+    pathname === '/staff' || pathname.startsWith('/staff/');
+
+  if (!isRfqApiRead && !isTradeDesk && !isDashboard && !isAdmin && !isStaff) {
     return NextResponse.next();
+  }
+
+  // The admin/staff portals authenticate with their own env-credential cookie,
+  // so they never need a Supabase call. Handle them up front and short-circuit.
+  if (isAdmin || isStaff) {
+    const cookie = request.cookies.get(ADMIN_SESSION_COOKIE)?.value;
+    const role = verifyAdminSession(cookie);
+
+    // `admin` may enter both; `staff` may enter `/staff` only.
+    const allowed =
+      (isAdmin && role === 'admin') ||
+      (isStaff && (role === 'admin' || role === 'staff'));
+
+    if (allowed) {
+      return NextResponse.next();
+    }
+
+    const loginUrl = request.nextUrl.clone();
+    loginUrl.pathname = ADMIN_LOGIN_PATH;
+    loginUrl.search = '';
+    // Remember where they were headed so sign-in can bounce them back.
+    loginUrl.searchParams.set('next', `${pathname}${search}`);
+
+    return NextResponse.redirect(loginUrl);
   }
 
   const pending: PendingCookie[] = [];
@@ -215,5 +255,13 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/trade-desk/:path*', '/dashboard/:path*', '/api/rfq'],
+  matcher: [
+    '/trade-desk/:path*',
+    '/dashboard/:path*',
+    '/api/rfq',
+    // The env-credential ERP portals. `/admin/login` is intentionally left
+    // reachable (the proxy excludes it) so unauthenticated visitors can sign in.
+    '/admin/:path*',
+    '/staff/:path*',
+  ],
 };

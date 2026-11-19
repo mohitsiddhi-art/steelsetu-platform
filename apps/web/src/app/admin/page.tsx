@@ -1,9 +1,14 @@
 import Navbar from '@/components/layout/Navbar';
+import AdminLogoutButton from '@/components/layout/AdminLogoutButton';
+import { requireAdminRole } from '@/services/adminGuard';
 import { Shield, Users, TrendingUp, AlertCircle, FileText } from 'lucide-react';
 
 export const instant = false;
 
-export default function AdminOverviewPage() {
+export default async function AdminOverviewPage() {
+  // Second lock: even if the proxy guard were bypassed, the page refuses to
+  // render without a valid signed session for the `admin` role.
+  await requireAdminRole(['admin']);
   return (
     <div className="min-h-screen bg-slate-950 text-white flex flex-col">
       <Navbar />
@@ -15,9 +20,7 @@ export default function AdminOverviewPage() {
             </h1>
             <p className="text-slate-400 mt-1">Platform management, supplier KYC verification, and dispute desk.</p>
           </div>
-          <span className="px-3 py-1 rounded bg-blue-900 border border-blue-700 text-blue-300 font-mono text-xs">
-            Admin: admin@steelsetu.com
-          </span>
+          <AdminLogoutButton />
         </div>
 
         {/* Metrics */}
