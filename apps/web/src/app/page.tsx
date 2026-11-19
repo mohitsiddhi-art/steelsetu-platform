@@ -16,7 +16,7 @@ import { getFeaturedBrands, getMarketRates } from '@/services/platformService';
 export const instant = false;
 
 export const metadata: Metadata = {
-  title: 'Steelsetu | Alibaba-Grade B2B Industrial Steel Trading & Supply Platform',
+  title: 'Steelsetu | Pan-India B2B Industrial Steel Trading & Supply Platform',
   description:
     'Build the Right Connection. Source the Right Steel. Post one requirement and get verified quotes for TMT bars, MS pipes, GI/PPGL roofing sheets, plates and coils from Indian mills across 25+ cities.',
   alternates: { canonical: '/' },
