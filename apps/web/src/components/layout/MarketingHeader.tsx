@@ -94,14 +94,14 @@ export default function MarketingHeader() {
 
               <Link
                 href="/user-login?intent=post"
-                className="ss-molten hidden rounded-full px-4 py-2 text-[0.8rem] font-semibold text-white md:inline-flex"
+                className="ss-molten hidden shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-[0.8rem] font-semibold text-white md:inline-flex"
               >
                 Post Your Requirement
               </Link>
 
               <Link
                 href="/user-login"
-                className="hidden rounded-full border border-white/15 bg-white/5 px-4 py-2 text-[0.8rem] font-semibold text-white backdrop-blur-md transition-colors hover:bg-white/10 md:inline-flex"
+                className="hidden shrink-0 whitespace-nowrap rounded-full border border-white/15 bg-white/5 px-4 py-2 text-[0.8rem] font-semibold text-white backdrop-blur-md transition-colors hover:bg-white/10 md:inline-flex"
               >
                 Login / Sign Up
               </Link>
