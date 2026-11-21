@@ -8,13 +8,13 @@ import { formatInr, formatMm } from '@/lib/format';
 import ComplaintModal from '@/components/trust/ComplaintModal';
 
 const CATEGORIES: { code: SteelCategory | null; label: string; count: string }[] = [
-  { code: null, label: 'All Categories', count: 'Full Inventory' },
-  { code: 'TMT_BAR', label: 'TMT Rebars (FE500D/550D)', count: '1,240 MT' },
-  { code: 'GI_SHEET', label: 'GP/GI Coils & Sheets', count: '850 MT' },
-  { code: 'PROFILE_SHEET', label: 'PPGL Roofing Sheets', count: '620 MT' },
-  { code: 'HR_COIL', label: 'HR/CR Plates & Sheets', count: '1,500 MT' },
-  { code: 'ANGLE_CHANNEL', label: 'Angles, Channels & Beams', count: '780 MT' },
-  { code: 'ROOFING_ACCESSORY', label: 'Roofing Accessories & Fasteners', count: '1,450 Boxes/Pcs' },
+  { code: null, label: 'All Categories', count: 'Full Catalog' },
+  { code: 'TMT_BAR', label: 'TMT Rebars (FE500D/550D)', count: 'Verified Mills' },
+  { code: 'GI_SHEET', label: 'GP/GI Coils & Sheets', count: 'Spot Stock' },
+  { code: 'PROFILE_SHEET', label: 'PPGL Roofing Sheets', count: 'Ready Dispatch' },
+  { code: 'HR_COIL', label: 'HR/CR Plates & Sheets', count: 'Industrial Grade' },
+  { code: 'ANGLE_CHANNEL', label: 'Angles, Channels & Beams', count: 'Standard Sections' },
+  { code: 'ROOFING_ACCESSORY', label: 'Roofing Accessories & Fasteners', count: 'In-Stock' },
 ];
 
 export default function SplitMarketplace({ products }: { products: SteelProduct[] }) {

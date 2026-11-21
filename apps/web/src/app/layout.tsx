@@ -3,7 +3,7 @@ import { LanguageProvider } from '@/context/LanguageContext';
 import { GlobalModalProvider } from '@/context/GlobalModalContext';
 import './globals.css';
 
-const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://steelsetu.com';
+const SITE_URL = 'https://www.steelsetu.com';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

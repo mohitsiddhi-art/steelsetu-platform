@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Why Kolkata Factory Roofs Leak: Mount SDS vs Local Screws | Steelsetu',
-  description: 'Fabricators saving ₹500 on local screws risk ₹75,000 in roof damage. Learn why Mount 12x55mm SDS screws with EPDM washers are necessary for Kolkata\'s climate.',
+  description: 'Fabricators saving ₹500 on local screws risk ₹75,000 in roof damage. Learn why Mount SDS screws with EPDM washers are necessary for industrial roofing in Kolkata.',
   authors: [{ name: 'Singhi Enterprises', url: 'https://steelsetu.com' }],
   openGraph: {
     title: 'Why Kolkata Factory Roofs Leak: Mount SDS vs Local Screws',
@@ -32,27 +32,37 @@ export default function BlogPage() {
               <time dateTime="2026-11-04">Nov 4, 2026</time>
             </div>
             <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-white mb-6 leading-tight">
-              Why Local Carbon Steel Screws Cost Your Factory Roof Thousands
+              Why Kolkata Factory Roofs Leak: Mount SDS vs Local Screws
             </h1>
             <div className="flex items-center gap-4 p-4 border border-slate-800 bg-slate-900/50 rounded-lg">
               <div className="h-10 w-10 rounded-full bg-slate-800 flex items-center justify-center text-orange-500 font-bold">SE</div>
               <div>
                 <p className="text-sm font-medium text-slate-200">Singhi Enterprises</p>
-                <p className="text-xs text-slate-400">Maharshi Debendra Road, Burrabazar, Kolkata</p>
+                <p className="text-xs text-slate-400">Maharshi Debendra Road, Burrabazar, Kolkata 700007</p>
               </div>
             </div>
           </header>
 
           <div className="space-y-8 text-lg leading-relaxed text-slate-300">
             <p>
-              Industrial factory roofs in Burrabazar and the industrial belts of Dankuni and Durgapur face a constant enemy: extreme humidity. If your industrial roof is leaking within two years, the culprit is rarely the sheet itself. It is the fastener. Fabricators often save ₹500 by installing local carbon steel screws. That decision leads to premature rusting and sheet damage that can cost over ₹75,000 in repairs.
+              Industrial factory roofs in Burrabazar and the industrial belts of Dankuni and Durgapur face a constant enemy: extreme humidity. If your industrial roofing structure is leaking within two years, the culprit is rarely the sheet itself. It is the fastener. Fabricators often save ₹500 by installing local carbon steel screws rather than genuine Mount SDS screws. That decision leads to premature rusting and sheet damage that can cost over ₹75,000 in repairs.
             </p>
 
             <section>
               <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
                 <span className="h-px w-8 bg-orange-500"></span>
-                The Hidden Cost of Saving on Fasteners
+                Why Kolkata’s Humidity is Lethal for Low-Grade Fasteners
               </h2>
+              <p>
+                The climate in West Bengal is unique. We have a combination of high humidity, saline air near the coast, and intense industrial pollutants in areas like Howrah and Durgapur. This creates a highly corrosive electrolyte on your roof. When a local unbranded screw with poor plating is exposed to this moisture, a galvanic cell forms. The steel starts to sacrifice itself almost immediately.
+              </p>
+              <p className="mt-4">
+                In a city like Kolkata, surface rust on a fastener head is not just an eyesore. It is the first sign of structural failure. As the rust expands, it acts like a slow-motion wedge, pushing against the roofing sheet and the washer. This process, known as rust-jacking, eventually breaks the watertight seal.
+              </p>
+            </section>
+
+            <section className="p-6 border border-slate-800 bg-slate-900/30 rounded-xl">
+              <h2 className="text-2xl font-bold text-white mb-6">The Hidden Cost of Saving on Fasteners</h2>
               <p>
                 When you choose a local unbranded screw, you get a bare bones fastener often prone to surface rust within months. Humidity in West Bengal accelerates this oxidation process significantly. As the screw head rusts, it expands. This expansion creates micro gaps between the screw and the roofing sheet.
               </p>
@@ -61,28 +71,28 @@ export default function BlogPage() {
               </p>
             </section>
 
-            <section className="p-6 border border-slate-800 bg-slate-900/30 rounded-xl">
-              <h2 className="text-2xl font-bold text-white mb-6">Technical Comparison: Why Specifications Matter</h2>
+            <section>
+              <h2 className="text-2xl font-bold text-white mb-4">Technical Comparison: Why Specifications Matter</h2>
 
               <div className="space-y-6">
                 <div>
                   <h3 className="text-xl font-semibold text-orange-400 mb-2">Zinc Coating and Corrosion Resistance</h3>
                   <p>
-                    Local unbranded screws typically feature 3 to 5 microns of commercial electro plating. This layer is too thin for the saline and humid air found in Kolkata and surrounding industrial hubs. Mount brand 12x55mm Self-Drilling Screws feature 15 to 20 microns of Class 3 hot dip zinc-tin coating, adhering to AS 3566 standards. This provides the necessary barrier to prevent rust in harsh environments.
+                    Local unbranded screws typically feature 3 to 5 microns of commercial electro plating. This layer is too thin for the saline and humid air found in Kolkata and surrounding industrial hubs. Mount SDS screws feature 15 to 20 microns of Class 3 hot dip zinc-tin coating, adhering to AS 3566 standards. This provides the necessary barrier to prevent rust in harsh environments.
                   </p>
                 </div>
 
                 <div>
                   <h3 className="text-xl font-semibold text-orange-400 mb-2">The Washer Material</h3>
                   <p>
-                    The washer is the unsung hero of a watertight roof. Local screws often use cheap black PVC or recycled rubber washers. These materials harden and crack under the intense 45°C Kolkata summer heat. Mount screws use high-density vulcanized EPDM washers. These retain elasticity and maintain a watertight seal up to 120°C, ensuring the seal remains effective despite daily thermal cycles.
+                    The washer is the unsung hero of a watertight roof. Local screws often use cheap black PVC or recycled rubber washers. These materials harden and crack under the intense 45 degree Celsius Kolkata summer heat. Mount screws use high density vulcanized EPDM washers. These retain elasticity and maintain a watertight seal up to 120 degrees Celsius. This ensures the seal remains effective despite daily thermal cycles.
                   </p>
                 </div>
 
                 <div>
                   <h3 className="text-xl font-semibold text-orange-400 mb-2">Drilling Capacity</h3>
                   <p>
-                    Installation efficiency is also key. Mount SDS screws feature a high-performance Tek-point #3 drill tip. This enables piercing up to 5mm thick MS purlins without slippage or metal burning, ensuring a secure grip that stays tight over time.
+                    Installation efficiency is also key. Mount SDS screws feature a high-performance Tek-point number three drill tip. This enables piercing up to 5mm thick MS purlins without slippage or metal burning. This ensures a secure grip that stays tight over time.
                   </p>
                 </div>
               </div>
@@ -91,7 +101,10 @@ export default function BlogPage() {
             <section>
               <h2 className="text-2xl font-bold text-white mb-4">The Thermal Expansion Math</h2>
               <p>
-                Metal moves constantly under changing temperatures. A twenty meter long continuous PPGL sheet expands four millimeters to six millimeters between a cold winter night at fourteen degrees Celsius and a scorching summer noon at forty three degrees Celsius.
+                Metal moves constantly under changing temperatures. This movement is often underestimated by site supervisors. A steel roofing sheet has a thermal expansion coefficient of approximately 12 micrometers per meter per degree Celsius.
+              </p>
+              <p className="mt-4">
+                Consider a twenty meter long continuous PPGL sheet. Between a cold winter night at 14 degrees Celsius and a scorching summer noon at 43 degrees Celsius, the temperature difference is 29 degrees. According to the formula, this sheet will expand and contract by nearly 7 millimeters every single day.
               </p>
               <p className="mt-4">
                 Under this continuous shear stress, poor quality washers disintegrate. When the rubber hardens, the lateral movement of the metal sheet slices right through the degraded washer. High density vulcanized EPDM absorbs this lateral shift without tearing or losing its memory. It expands and contracts alongside the steel panel, keeping the penetration point entirely dry.
@@ -104,7 +117,7 @@ export default function BlogPage() {
                 Even a premium fastener fails if installed incorrectly. A common error on site involves over-torquing the drill gun. When local mistries drive the screw at maximum RPM without setting a depth clutch, they crush the EPDM washer completely flat.
               </p>
               <p className="mt-4">
-                A crushed washer loses its elasticity on day one, creating a ring of stress where water pools and begins corrosion. Proper installation requires stopping the drill the moment the washer bulges slightly past the metal sealing face, preserving its cushion and sealing power.
+                A crushed washer loses its elasticity on day one. This creates a ring of stress where water pools and begins corrosion. Proper installation requires stopping the drill the moment the washer bulges slightly past the metal sealing face. This preserves its cushion and sealing power. You should be able to see a slight mushrooming of the EPDM without it being squeezed out from under the metal cap.
               </p>
             </section>
 
@@ -146,14 +159,14 @@ export default function BlogPage() {
               <ul className="list-disc pl-6 space-y-2 mt-4 text-slate-300">
                 <li><strong>Brand Stamp:</strong> Check the screw head for the clear factory-embossed brand stamp.</li>
                 <li><strong>EPDM Test:</strong> Real vulcanized EPDM is bonded directly to the metal backing and will not peel off or crack when bent.</li>
-                <li><strong>Tip Sharpness:</strong> Tek-point #3 flutes are sharp and precisely milled, not blunt or rounded.</li>
+                <li><strong>Tip Sharpness:</strong> Tek-point number three flutes are sharp and precisely milled, not blunt or rounded.</li>
               </ul>
             </section>
 
             <section className="bg-slate-900 border-2 border-orange-500/20 p-8 rounded-2xl mt-12">
               <h2 className="text-2xl font-bold text-white mb-4">Purchase and Availability</h2>
               <p className="mb-6">
-                Ready bulk stock of Mount SDS screws in original factory boxes (12x55mm and 12x25mm) is available at Singhi Enterprises.
+                Ready bulk stock of Mount SDS screws in original factory boxes (12x55mm and 12x25mm) is available at Singhi Enterprises. We maintain deep inventory for immediate dispatch to sites in Dankuni, Uluberia, and Durgapur.
               </p>
               <div className="grid sm:grid-cols-2 gap-4">
                 <Link
@@ -172,7 +185,7 @@ export default function BlogPage() {
                 </a>
               </div>
               <p className="mt-6 text-sm text-center text-slate-400">
-                Singhi Enterprises | Maharshi Debendra Road, Burrabazar, Kolkata - 700007
+                Singhi Enterprises | Maharshi Debendra Road, Burrabazar, Kolkata 700007
               </p>
             </section>
 

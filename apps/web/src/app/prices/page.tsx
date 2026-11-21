@@ -82,10 +82,13 @@ export default async function PricesPage() {
               <Activity className="w-3.5 h-3.5 text-blue-400" /> Burrabazar Mandi Institutional Monitor
             </div>
             <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white font-display">
-              Live Steel Market Rates
+              Steel Market Rates Monitor
             </h1>
             <p className="mt-4 text-base leading-relaxed text-slate-300">
-              Institutional ex-mill and Burrabazar stockist spot benchmarks. Updated in real time for TMT rebars, structural channels, beams, and color-coated coils.
+              Institutional ex-mill and Burrabazar stockist benchmarks. Rates are indicative market references. Updated for TMT rebars, structural channels, beams, and color-coated coils.
+            </p>
+            <p className="mt-2 text-xs text-ss-orange font-medium italic">
+              *Prices shown are market benchmarks excluding GST & freight. Verified live quotes available via Trade Desk.
             </p>
           </Reveal>
 

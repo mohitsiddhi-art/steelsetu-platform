@@ -46,7 +46,7 @@ export default function PriceTicker({ rates }: { rates: MarketRate[] }) {
           <div className="flex items-center gap-3">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-[0.7rem] font-bold uppercase tracking-wider text-emerald-300">
               <Activity className="h-3.5 w-3.5" aria-hidden="true" />
-              Live Mandi Rates
+              Indicative Mandi Rates
             </span>
 
             <div className="inline-flex rounded-xl border border-white/10 bg-black/40 p-1 text-xs">
@@ -64,6 +64,9 @@ export default function PriceTicker({ rates }: { rates: MarketRate[] }) {
                 </button>
               ))}
             </div>
+            <span className="hidden lg:inline-block text-[10px] text-slate-500 italic">
+              *Benchmark rates only. Confirm live quote via Trade Desk.
+            </span>
           </div>
 
           <a
